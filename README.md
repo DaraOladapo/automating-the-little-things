@@ -25,8 +25,8 @@ A smart, auto-classifying inbox assistant powered by:
 - `Synology NAS` + `Cloudflare Tunnel` for self-hosted flexibility
 
 📂 Get started → [`./workflows/inbox-zero/workflow.json`](./workflows/inbox-zero/workflow.json)  
-📺 Watch the full YouTube walkthrough → [Inbox Zero: How I Automated My Email](https://youtu.be/aeauRwQoeoY)  
-[![Watch on YouTube](https://img.youtube.com/vi/aeauRwQoeoY/hqdefault.jpg)](https://youtu.be/aeauRwQoeoY)
+📺 Watch the full YouTube walkthrough → [Inbox Zero: How I Automated My Email](https://youtu.be/4a0vVQNyiMY)  
+[![Watch on YouTube](https://img.youtube.com/vi/aeauRwQoeoY/hqdefault.jpg)](https://youtu.be/4a0vVQNyiMY)
 
 ---
 
