@@ -39,11 +39,17 @@ This folder contains a streamlined **n8n** workflow designed to automate your em
 
 ---
 
-## 📺 Walkthrough Coming Soon
+## 📺 Walkthrough Video
 
-Video tutorial + config tips will be linked here once published.
+🎥 [Inbox Zero: How I Automated My Email](https://youtu.be/aeauRwQoeoY)  
+[![Watch on YouTube](https://img.youtube.com/vi/aeauRwQoeoY/hqdefault.jpg)](https://youtu.be/aeauRwQoeoY)
 
-Stay updated via the [main repository](https://github.com/DaraOladapo/automating-the-little-things).
+---
+
+## 🙌 Contribute
+
+This workflow is part of the [`automating-the-little-things`](https://github.com/DaraOladapo/automating-the-little-things) project.  
+PRs and variations (e.g. with Gmail Threads API or Notion archiving) are very welcome.
 
 ---
 
