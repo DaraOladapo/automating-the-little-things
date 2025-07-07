@@ -24,8 +24,9 @@ A smart, auto-classifying inbox assistant powered by:
 - `IMAP/SMTP` for universal email provider support  
 - `Synology NAS` + `Cloudflare Tunnel` for self-hosted flexibility
 
-📂 Get started → [`./workflows/inbox-zero.json`](./workflows/inbox-zero.json)  
-📺 Walkthrough Video → [Watch on YouTube](#)
+📂 Get started → [`./workflows/inbox-zero/workflow.json`](./workflows/inbox-zero/workflow.json)  
+📺 Watch the full YouTube walkthrough → [Inbox Zero: How I Automated My Email](https://youtu.be/aeauRwQoeoY)  
+[![Watch on YouTube](https://img.youtube.com/vi/aeauRwQoeoY/hqdefault.jpg)](https://youtu.be/aeauRwQoeoY)
 
 ---
 
@@ -41,8 +42,7 @@ A smart, auto-classifying inbox assistant powered by:
 
 ---
 
-## 🎯 Why This Repo Exists
-
+## 🎯 Why This Repo Exists  
 Because the little things matter.  
 **Automate what drains your time—focus on what fuels your creativity.**
 
