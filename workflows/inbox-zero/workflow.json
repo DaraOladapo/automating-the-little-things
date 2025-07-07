@@ -1,0 +1,447 @@
+{
+  "name": "Mail Helper Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert email assistant.\n\nInput details:\nSender email: {{ $json.sender.emailAddress.address }}\nSubject: {{ $json.subject }}\nHTML Body: {{ $json.body.content }}\nEmail ID: {{ $json.id }}\n\nTasks:\n1. Convert the HTML Body into clean, readable plain text.\n2. Summarize the email in 3-5 sentences.\n3. Detect the email intent. Allowed intents are:\n   - no_action\n   - response_needed\n4. Identify the tone of the email (formal, friendly, urgent, etc.).\n5. Draft a polite, concise reply email based on the detected intent and email content. Include this address only if the intent requires it:\n\n\n\n**Important:** Do NOT include the sender email in the output.\n\nOnly attach the Paypal details if the sender requests it in the email body.\n\nFormat the address if required according to the sender's requirements.\n\nThe email response should be properly formatted with adequate line breaks where needed.\n\nReturn only JSON in the exact format below, no extra text:\n\n{\n  \"email_id\": \"...\",\n  \"plain_text_body\": \"...\",\n  \"summary\": \"...\",\n  \"intent\": \"...\",\n  \"tone\": \"...\",\n  \"reply\": \"...\"\n}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a professional assistant who analyses emails, classifies intent, and drafts appropriate, well-formatted replies. Your responses should be polite, clear, and match the tone of the original message. Use the sender's context to tailor your reply."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -420,
+        -410
+      ],
+      "id": "d0a2ccd1-6311-459e-8e6a-4b269b4675fc",
+      "name": "<GIVE_IT_A_FUN_NAME> Agent",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "output": "raw",
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "foldersToExclude": [
+              ],
+              "readStatus": "unread"
+            }
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -860,
+        -385
+      ],
+      "id": "f1008f57-7972-4dc3-b9df-a0ad0a701132",
+      "name": "<GIVE_IT_A_FUN_NAME> Unread",
+      "webhookId": "fcd66fd8-eb2f-47e1-91a1-5a15f2d34bf8",
+      "alwaysOutputData": true,
+      "credentials": {
+      
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 15,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "output": "raw",
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        -860,
+        -185
+      ],
+      "id": "cf33bbae-71bc-472b-93eb-735fabd49b6f",
+      "name": "<GIVE_IT_A_FUN_NAME> New",
+      "credentials": {
+        
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -640,
+        -285
+      ],
+      "id": "942189ae-6d06-4481-8569-d5282dd73c4c",
+      "name": "<GIVE_IT_A_FUN_NAME> Loop"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4.1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        -200
+      ],
+      "id": "f6439315-aac7-4040-beef-65aad3ca7888",
+      "name": "<GIVE_IT_A_FUN_NAME> Model",
+      "credentials": {
+        
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"email_id\": \"...\",\n  \"plain_text_body\": \"...\",\n  \"summary\": \"...\",\n  \"intent\": \"...\",\n  \"tone\": \"...\",\n  \"reply\": \"...\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -272,
+        -190
+      ],
+      "id": "71908e7f-966a-4766-a30c-ac5865418232",
+      "name": "<GIVE_IT_A_FUN_NAME> Parser"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "844e5e0a-98c6-4cd5-a77e-c3e904492637",
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "response_needed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Response Needed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8e8e672d-adb8-40ce-ab36-720e83ed8916",
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "no_action",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "No Action Needed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -44,
+        -460
+      ],
+      "id": "340c9104-40f4-42a9-ac09-8c32754ae815",
+      "name": "<GIVE_IT_A_FUN_NAME> Action Switch"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -44,
+        -185
+      ],
+      "id": "a7acb6d1-a40f-4fba-ba0e-00b6b829cac9",
+      "name": "<GIVE_IT_A_FUN_NAME> Agent Wait",
+      "webhookId": "a781faf9-eeb7-4d40-a039-678246297d12"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $json.output.email_id }}",
+          "mode": "id"
+        },
+        "message": "={{ $json.output.reply }}",
+        "options": {
+          "saveAsDraft": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        176,
+        -560
+      ],
+      "id": "8efeb112-21b6-4128-9300-29c55a6609d0",
+      "name": "<GIVE_IT_A_FUN_NAME> Draft Reply",
+      "webhookId": "f3b2b383-deb9-4bfc-85a2-8f592726cb3d",
+      "credentials": {
+       
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $json.output.email_id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "isRead": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        176,
+        -360
+      ],
+      "id": "988b17d0-525e-413d-b7ad-c35b156e3db8",
+      "name": "<GIVE_IT_A_FUN_NAME> No Action->Read",
+      "webhookId": "147aee6c-c153-485e-aa4e-0ae84e7b8281",
+      "credentials": {
+       
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "categories": [
+            "Red category"
+          ],
+          "importance": "High",
+          "isRead": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        396,
+        -560
+      ],
+      "id": "89378edc-b621-4902-af1f-1c2dc95b3be5",
+      "name": "<GIVE_IT_A_FUN_NAME>->Read",
+      "webhookId": "339de037-5a8c-461f-87fb-81fdcc3f3d9e",
+      "credentials": {
+       
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1080,
+        -385
+      ],
+      "id": "c9716f15-9d13-484c-9ac6-e8262403953f",
+      "name": "<GIVE_IT_A_FUN_NAME> Daily"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "<GIVE_IT_A_FUN_NAME> Agent": {
+      "main": [
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Action Switch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Agent Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "<GIVE_IT_A_FUN_NAME> Unread": {
+      "main": [
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "<GIVE_IT_A_FUN_NAME> New": {
+      "main": [
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "<GIVE_IT_A_FUN_NAME> Loop": {
+      "main": [
+        [],
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "<GIVE_IT_A_FUN_NAME> Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "<GIVE_IT_A_FUN_NAME> Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "<GIVE_IT_A_FUN_NAME> Action Switch": {
+      "main": [
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> No Action->Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "<GIVE_IT_A_FUN_NAME> Agent Wait": {
+      "main": [
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "<GIVE_IT_A_FUN_NAME> Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME>->Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "<GIVE_IT_A_FUN_NAME> Daily": {
+      "main": [
+        [
+          {
+            "node": "<GIVE_IT_A_FUN_NAME> Unread",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fbc883ab-181b-421e-aec7-d2ae80e9e80e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2cc3efdef751b01f318426ce8412206bae0b876b1c08eba658a454393e6f0978"
+  },
+  "id": "qZdqRdhdnXe7uZpP",
+  "tags": [
+    {
+      "createdAt": "2025-06-24T09:32:46.394Z",
+      "updatedAt": "2025-06-24T09:32:46.394Z",
+      "id": "m9sANwHMyZRQ7Q3j",
+      "name": "assistant"
+    }
+  ]
+}
