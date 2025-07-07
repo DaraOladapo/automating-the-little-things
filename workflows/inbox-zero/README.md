@@ -41,8 +41,8 @@ This folder contains a streamlined **n8n** workflow designed to automate your em
 
 ## 📺 Walkthrough Video
 
-🎥 [Inbox Zero: How I Automated My Email](https://youtu.be/aeauRwQoeoY)  
-[![Watch on YouTube](https://img.youtube.com/vi/aeauRwQoeoY/hqdefault.jpg)](https://youtu.be/aeauRwQoeoY)
+🎥 [Inbox Zero: How I Automated My Email](https://youtu.be/4a0vVQNyiMY)  
+[![Watch on YouTube](https://img.youtube.com/vi/aeauRwQoeoY/hqdefault.jpg)](https://youtu.be/4a0vVQNyiMY)
 
 ---
 
